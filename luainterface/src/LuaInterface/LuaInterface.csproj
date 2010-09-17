@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CheckType.cs" />
+    <Compile Include="Extensions\LuaAttribute.cs" />
+    <Compile Include="Extensions\LuaExtensions.cs" />
     <Compile Include="GenerateEventAssembly.cs" />
     <Compile Include="Lua.cs" />
     <Compile Include="LuaBase.cs" />
@@ -79,6 +81,7 @@
     <None Include="luainterface.snk" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Extensions" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
