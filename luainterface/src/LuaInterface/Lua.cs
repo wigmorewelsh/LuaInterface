@@ -990,6 +990,26 @@ namespace LuaInterface
 		}
 
 		/*
+		 * Returns an object's method as an anonymous Lua function (global or table field)
+		 * The method may have any signature
+		 */
+		public LuaFunction LambdaFunction(object target, MethodBase function)
+		{
+            int oldTop = LuaDLL.lua_gettop(luaState);
+            
+			LuaMethodWrapper wrapper=new LuaMethodWrapper(translator,target,function.DeclaringType,function);
+			translator.push(luaState,new LuaCSFunction(wrapper.call));
+			
+			object obj = translator.getObject(luaState,-1);
+			
+			LuaFunction f = new LuaFunction((LuaCSFunction)obj, this);
+
+            LuaDLL.lua_settop(luaState, oldTop);
+
+            return f;			
+		}
+
+		/*
 		 * Registers an object's method as a Lua function (global or table field)
 		 * The method may have any signature
 		 */
