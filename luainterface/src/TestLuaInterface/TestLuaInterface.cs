@@ -4,6 +4,8 @@ using System.Text;
 using System.Threading;
 using System.Reflection;
 
+using NUnit.Framework;
+
 namespace LuaInterface.Tests
 {
     /*
@@ -12,28 +14,28 @@ namespace LuaInterface.Tests
 	 * Author: Fabio Mascarenhas
 	 * Version: 1.0
 	 */
+	[TestFixture]
     public class TestLuaInterface
     {
-        private Lua _Lua;
+        private Lua lua;
         /*
          * Executed before each test case
          */
+        [TestFixtureSetUp]
         public void Init()
         {
-            _Lua = new Lua();
+            lua = new Lua();
 
             GC.Collect();  // runs GC to expose unprotected delegates
         }
         /*
          * Executed after each test case
          */
+        [TestFixtureTearDown]
         public void Destroy()
         {
-            _Lua = null;
+            lua = null;
         }
-
-#if false
-        // I've commented out the nunit based tests until they can run standalone - so that users don't need nunit to run TestLua
 
 		/*
 		 * Tests if DoString is correctly returning values
@@ -43,8 +45,8 @@ namespace LuaInterface.Tests
 		{
 			object[] res=lua.DoString("a=2\nreturn a,3");
 			//Console.WriteLine("a="+res[0]+", b="+res[1]);
-			Assertion.AssertEquals(res[0],2);
-			Assertion.AssertEquals(res[1],3);
+			Assert.AreEqual(res[0],2);
+			Assert.AreEqual(res[1],3);
 		}
 		/*
 		 * Tests getting of global numeric variables
@@ -55,7 +57,7 @@ namespace LuaInterface.Tests
 			lua.DoString("a=2");
 			double num=lua.GetNumber("a");
 			//Console.WriteLine("a="+num);
-			Assertion.AssertEquals(num,2);
+			Assert.AreEqual(num,2);
 		}
 		/*
 		 * Tests setting of global numeric variables
@@ -67,7 +69,7 @@ namespace LuaInterface.Tests
 			lua["a"]=3;
 			double num=lua.GetNumber("a");
 			//Console.WriteLine("a="+num);
-			Assertion.AssertEquals(num,3);
+			Assert.AreEqual(num,3);
 		}
 		/*
 		 * Tests getting of numeric variables from tables
@@ -79,7 +81,7 @@ namespace LuaInterface.Tests
 			lua.DoString("a={b={c=2}}");
 			double num=lua.GetNumber("a.b.c");
 			//Console.WriteLine("a.b.c="+num);
-			Assertion.AssertEquals(num,2);
+			Assert.AreEqual(num,2);
 		}
 		/*
 		 * Tests setting of numeric variables from tables
@@ -92,7 +94,7 @@ namespace LuaInterface.Tests
 			lua["a.b.c"]=3;
 			double num=lua.GetNumber("a.b.c");
 			//Console.WriteLine("a.b.c="+num);
-			Assertion.AssertEquals(num,3);
+			Assert.AreEqual(num,3);
 		}
 		/*
 		 * Tests getting of global string variables
@@ -103,7 +105,7 @@ namespace LuaInterface.Tests
 			lua.DoString("a=\"test\"");
 			string str=lua.GetString("a");
 			//Console.WriteLine("a="+str);
-			Assertion.AssertEquals(str,"test");
+			Assert.AreEqual(str,"test");
 		}
 		/*
 		 * Tests setting of global string variables
@@ -115,7 +117,7 @@ namespace LuaInterface.Tests
 			lua["a"]="new test";
 			string str=lua.GetString("a");
 			//Console.WriteLine("a="+str);
-			Assertion.AssertEquals(str,"new test");
+			Assert.AreEqual(str,"new test");
 		}
 		/*
 		 * Tests getting of string variables from tables
@@ -127,7 +129,7 @@ namespace LuaInterface.Tests
 			lua.DoString("a={b={c=\"test\"}}");
 			string str=lua.GetString("a.b.c");
 			//Console.WriteLine("a.b.c="+str);
-			Assertion.AssertEquals(str,"test");
+			Assert.AreEqual(str,"test");
 		}
 		/*
 		 * Tests setting of string variables from tables
@@ -140,7 +142,7 @@ namespace LuaInterface.Tests
 			lua["a.b.c"]="new test";
 			string str=lua.GetString("a.b.c");
 			//Console.WriteLine("a.b.c="+str);
-			Assertion.AssertEquals(str,"new test");
+			Assert.AreEqual(str,"new test");
 		}
 		/*
 		 * Tests getting and setting of global table variables
@@ -153,7 +155,7 @@ namespace LuaInterface.Tests
 			lua["a.b"]=tab;
 			double num=lua.GetNumber("a.b.c");
 			//Console.WriteLine("a.b.c="+num);
-			Assertion.AssertEquals(num,3);
+			Assert.AreEqual(num,3);
 		}
 		/*
 		 * Tests getting of numeric field of a table
@@ -165,7 +167,7 @@ namespace LuaInterface.Tests
 			LuaTable tab=lua.GetTable("a.b");
 			double num=(double)tab["c"];
 			//Console.WriteLine("a.b.c="+num);
-			Assertion.AssertEquals(num,2);
+			Assert.AreEqual(num,2);
 		}
 		/*
 		 * Tests getting of numeric field of a table
@@ -178,7 +180,7 @@ namespace LuaInterface.Tests
 			LuaTable tab=lua.GetTable("a");
 			double num=(double)tab["b.c"];
 			//Console.WriteLine("a.b.c="+num);
-			Assertion.AssertEquals(num,2);
+			Assert.AreEqual(num,2);
 		}
 		/*
 		 * Tests setting of numeric field of a table
@@ -191,7 +193,7 @@ namespace LuaInterface.Tests
 			tab["c"]=3;
 			double num=lua.GetNumber("a.b.c");
 			//Console.WriteLine("a.b.c="+num);
-			Assertion.AssertEquals(num,3);
+			Assert.AreEqual(num,3);
 		}
 		/*
 		 * Tests setting of numeric field of a table
@@ -205,7 +207,7 @@ namespace LuaInterface.Tests
 			tab["b.c"]=3;
 			double num=lua.GetNumber("a.b.c");
 			//Console.WriteLine("a.b.c="+num);
-			Assertion.AssertEquals(num,3);
+			Assert.AreEqual(num,3);
 		}
 		/*
 		 * Tests getting of string field of a table
@@ -217,7 +219,7 @@ namespace LuaInterface.Tests
 			LuaTable tab=lua.GetTable("a.b");
 			string str=(string)tab["c"];
 			//Console.WriteLine("a.b.c="+str);
-			Assertion.AssertEquals(str,"test");
+			Assert.AreEqual(str,"test");
 		}
 		/*
 		 * Tests getting of string field of a table
@@ -230,7 +232,7 @@ namespace LuaInterface.Tests
 			LuaTable tab=lua.GetTable("a");
 			string str=(string)tab["b.c"];
 			//Console.WriteLine("a.b.c="+str);
-			Assertion.AssertEquals(str,"test");
+			Assert.AreEqual(str,"test");
 		}
 		/*
 		 * Tests setting of string field of a table
@@ -243,7 +245,7 @@ namespace LuaInterface.Tests
 			tab["c"]="new test";
 			string str=lua.GetString("a.b.c");
 			//Console.WriteLine("a.b.c="+str);
-			Assertion.AssertEquals(str,"new test");
+			Assert.AreEqual(str,"new test");
 		}
 		/*
 		 * Tests setting of string field of a table
@@ -257,7 +259,7 @@ namespace LuaInterface.Tests
 			tab["b.c"]="new test";
 			string str=lua.GetString("a.b.c");
 			//Console.WriteLine("a.b.c="+str);
-			Assertion.AssertEquals(str,"new test");
+			Assert.AreEqual(str,"new test");
 		}
 		/*
 		 * Tests calling of a global function with zero arguments
@@ -269,7 +271,7 @@ namespace LuaInterface.Tests
 			lua.GetFunction("f").Call();
 			double num=lua.GetNumber("a");
 			//Console.WriteLine("a="+num);
-			Assertion.AssertEquals(num,3);
+			Assert.AreEqual(num,3);
 		}
 		/*
 		 * Tests calling of a global function with one argument
@@ -281,7 +283,7 @@ namespace LuaInterface.Tests
 			lua.GetFunction("f").Call(1);
 			double num=lua.GetNumber("a");
 			//Console.WriteLine("a="+num);
-			Assertion.AssertEquals(num,3);
+			Assert.AreEqual(num,3);
 		}
 		/*
 		 * Tests calling of a global function with two arguments
@@ -293,7 +295,7 @@ namespace LuaInterface.Tests
 			lua.GetFunction("f").Call(1,3);
 			double num=lua.GetNumber("a");
 			//Console.WriteLine("a="+num);
-			Assertion.AssertEquals(num,4);
+			Assert.AreEqual(num,4);
 		}
 		/*
 		 * Tests calling of a global function that returns one value
@@ -304,8 +306,8 @@ namespace LuaInterface.Tests
 			lua.DoString("function f(x)\nreturn x+2\nend");
 			object[] ret=lua.GetFunction("f").Call(3);
 			//Console.WriteLine("ret="+ret[0]);
-			Assertion.AssertEquals(1,ret.Length);
-			Assertion.AssertEquals(5,ret[0]);
+			Assert.AreEqual(1,ret.Length);
+			Assert.AreEqual(5,ret[0]);
 		}
 		/*
 		 * Tests calling of a global function that returns two values
@@ -316,9 +318,9 @@ namespace LuaInterface.Tests
 			lua.DoString("function f(x,y)\nreturn x,x+y\nend");
 			object[] ret=lua.GetFunction("f").Call(3,2);
 			//Console.WriteLine("ret="+ret[0]+","+ret[1]);
-			Assertion.AssertEquals(2,ret.Length);
-			Assertion.AssertEquals(3,ret[0]);
-			Assertion.AssertEquals(5,ret[1]);
+			Assert.AreEqual(2,ret.Length);
+			Assert.AreEqual(3,ret[0]);
+			Assert.AreEqual(5,ret[1]);
 		}
 		/*
 		 * Tests calling of a function inside a table
@@ -329,9 +331,9 @@ namespace LuaInterface.Tests
 			lua.DoString("a={}\nfunction a.f(x,y)\nreturn x,x+y\nend");
 			object[] ret=lua.GetFunction("a.f").Call(3,2);
 			//Console.WriteLine("ret="+ret[0]+","+ret[1]);
-			Assertion.AssertEquals(2,ret.Length);
-			Assertion.AssertEquals(3,ret[0]);
-			Assertion.AssertEquals(5,ret[1]);
+			Assert.AreEqual(2,ret.Length);
+			Assert.AreEqual(3,ret[0]);
+			Assert.AreEqual(5,ret[1]);
 		}
 		/*
 		 * Tests setting of a global variable to a CLR object value
@@ -344,12 +346,13 @@ namespace LuaInterface.Tests
 			lua["netobj"]=t1;
 			object o=lua["netobj"];
 			TestClass t2=(TestClass)lua["netobj"];
-			Assertion.AssertEquals(t2.testval,4);
-			Assertion.Assert(t1==t2);
+			Assert.AreEqual(t2.testval,4);
+			Assert.AreEqual(t1, t2);
 		}
 		/*
 		 * Tests if CLR object is being correctly collected by Lua
 		 */
+		[Ignore]
 		[Test]
 		public void GarbageCollection() 
 		{
@@ -357,9 +360,9 @@ namespace LuaInterface.Tests
 			t1.testval=4;
 			lua["netobj"]=t1;
 			TestClass t2=(TestClass)lua["netobj"];
-			Assertion.Assert(lua.translator.objects[0]!=null);
+			Assert.AreNotEqual(lua.translator.objects[0], null);
 			lua.DoString("netobj=nil;collectgarbage();");
-			Assertion.Assert(lua.translator.objects[0]==null);
+			Assert.AreNotEqual(lua.translator.objects[0], null);
 		}
 		/*
 		 * Tests setting of a table field to a CLR object value
@@ -374,8 +377,8 @@ namespace LuaInterface.Tests
 			tab["c"]=t1;
 			TestClass t2=(TestClass)lua["a.b.c"];
 			//Console.WriteLine("a.b.c="+t2.testval);
-			Assertion.AssertEquals(t2.testval,4);
-			Assertion.Assert(t1==t2);
+			Assert.AreEqual(t2.testval,4);
+			Assert.IsTrue(t1==t2);
 		}
 		/*
 		 * Tests reading and writing of an object's field
@@ -389,9 +392,9 @@ namespace LuaInterface.Tests
 			lua.DoString("var=netobj.val");
 			double var=(double)lua["var"];
 			//Console.WriteLine("value from Lua="+var);
-			Assertion.AssertEquals(4,var);
+			Assert.AreEqual(4,var);
 			lua.DoString("netobj.val=3");
-			Assertion.AssertEquals(3,t1.val);
+			Assert.AreEqual(3,t1.val);
 			//Console.WriteLine("new val (from Lua)="+t1.val);
 		}
 		/*
@@ -407,9 +410,9 @@ namespace LuaInterface.Tests
 			lua.DoString("var=netobj.testval");
 			double var=(double)lua["var"];
 			//Console.WriteLine("value from Lua="+var);
-			Assertion.AssertEquals(4,var);
+			Assert.AreEqual(4,var);
 			lua.DoString("netobj.testval=3");
-			Assertion.AssertEquals(3,t1.testval);
+			Assert.AreEqual(3,t1.testval);
 			//Console.WriteLine("new val (from Lua)="+t1.testval);
 		}
 		/*
@@ -422,11 +425,11 @@ namespace LuaInterface.Tests
 			t1.testval=4;
 			lua["netobj"]=t1;
 			lua.DoString("netobj:setVal(3)");
-			Assertion.AssertEquals(3,t1.testval);
+			Assert.AreEqual(3,t1.testval);
 			//Console.WriteLine("new val(from C#)="+t1.testval);
 			lua.DoString("val=netobj:getVal()");
 			int val=(int)lua.GetNumber("val");
-			Assertion.AssertEquals(3,val);
+			Assert.AreEqual(3,val);
 			//Console.WriteLine("new val(from Lua)="+val);
 		}
 		/*
@@ -438,13 +441,14 @@ namespace LuaInterface.Tests
 			TestClass t1=new TestClass();
 			lua["netobj"]=t1;
 			lua.DoString("netobj:setVal('str')");
-			Assertion.AssertEquals("str",t1.getStrVal());
+			Assert.AreEqual("str",t1.getStrVal());
 			//Console.WriteLine("new val(from C#)="+t1.getStrVal());
 		}
 		/*
 		 * Tests calling of an object's method with no overloading
 		 * and out parameters
 		 */
+		[Ignore]
 		[Test]
 		public void CallObjectMethodOutParam() 
 		{
@@ -453,14 +457,15 @@ namespace LuaInterface.Tests
 			lua.DoString("a,b=netobj:outVal()");
 			int a=(int)lua.GetNumber("a");
 			int b=(int)lua.GetNumber("b");
-			Assertion.AssertEquals(3,a);
-			Assertion.AssertEquals(5,b);
+			Assert.AreEqual(3,a);
+			Assert.AreEqual(5,b);
 			//Console.WriteLine("function returned (from lua)="+a+","+b);
 		}
 		/*
 		 * Tests calling of an object's method with overloading and
 		 * out params
 		 */
+		[Ignore]
 		[Test]
 		public void CallObjectMethodOverloadedOutParam() 
 		{
@@ -469,13 +474,14 @@ namespace LuaInterface.Tests
 			lua.DoString("a,b=netobj:outVal(2)");
 			int a=(int)lua.GetNumber("a");
 			int b=(int)lua.GetNumber("b");
-			Assertion.AssertEquals(2,a);
-			Assertion.AssertEquals(5,b);
+			Assert.AreEqual(2,a);
+			Assert.AreEqual(5,b);
 			//Console.WriteLine("function returned (from lua)="+a+","+b);
 		}
 		/*
 		 * Tests calling of an object's method with ref params
 		 */
+		[Ignore]
 		[Test]
 		public void CallObjectMethodByRefParam() 
 		{
@@ -484,14 +490,15 @@ namespace LuaInterface.Tests
 			lua.DoString("a,b=netobj:outVal(2,3)");
 			int a=(int)lua.GetNumber("a");
 			int b=(int)lua.GetNumber("b");
-			Assertion.AssertEquals(2,a);
-			Assertion.AssertEquals(5,b);
+			Assert.AreEqual(2,a);
+			Assert.AreEqual(5,b);
 			//Console.WriteLine("function returned (from lua)="+a+","+b);
 		}
 		/*
 		 * Tests calling of two versions of an object's method that have
 		 * the same name and signature but implement different interfaces
 		 */
+		[Ignore]
 		[Test]
 		public void CallObjectMethodDistinctInterfaces() 
 		{
@@ -501,24 +508,25 @@ namespace LuaInterface.Tests
 			lua.DoString("b=netobj['LuaInterface.Tests.IFoo1.foo'](netobj)");
 			int a=(int)lua.GetNumber("a");
 			int b=(int)lua.GetNumber("b");
-			Assertion.AssertEquals(5,a);
-			Assertion.AssertEquals(3,b);
+			Assert.AreEqual(5,a);
+			Assert.AreEqual(3,b);
 			//Console.WriteLine("function returned (from lua)="+a+","+b);
 		}
 		/*
 		 * Tests instantiating an object with no-argument constructor
 		 */
+		[Ignore]
 		[Test]
 		public void CreateNetObjectNoArgsCons()
 		{
-			lua.DoString("load_assembly(\"TestLua\")");
-			lua.DoString("TestClass=import_type(\"LuaInterface.Tests.TestClass\")");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type(\"LuaInterface.Tests.TestClass\")");
 			lua.DoString("test=TestClass()");
 			lua.DoString("test:setVal(3)");
 			object[] res=lua.DoString("return test");
 			TestClass test=(TestClass)res[0];
 			//Console.WriteLine("returned: "+test.testval);
-			Assertion.AssertEquals(3,test.testval);
+			Assert.AreEqual(3,test.testval);
 		}
 		/*
 		 * Tests instantiating an object with one-argument constructor
@@ -526,13 +534,13 @@ namespace LuaInterface.Tests
 		[Test]
 		public void CreateNetObjectOneArgCons()
 		{
-			lua.DoString("load_assembly(\"TestLua\")");
-			lua.DoString("TestClass=import_type(\"LuaInterface.Tests.TestClass\")");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type(\"LuaInterface.Tests.TestClass\")");
 			lua.DoString("test=TestClass(3)");
 			object[] res=lua.DoString("return test");
 			TestClass test=(TestClass)res[0];
 			//Console.WriteLine("returned: "+test.testval);
-			Assertion.AssertEquals(3,test.testval);
+			Assert.AreEqual(3,test.testval);
 		}
 		/*
 		 * Tests instantiating an object with overloaded constructor
@@ -540,13 +548,13 @@ namespace LuaInterface.Tests
 		[Test]
 		public void CreateNetObjectOverloadedCons()
 		{
-			lua.DoString("load_assembly(\"TestLua\")");
-			lua.DoString("TestClass=import_type(\"LuaInterface.Tests.TestClass\")");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type(\"LuaInterface.Tests.TestClass\")");
 			lua.DoString("test=TestClass('str')");
 			object[] res=lua.DoString("return test");
 			TestClass test=(TestClass)res[0];
 			//Console.WriteLine("returned: "+test.getStrVal());
-			Assertion.AssertEquals("str",test.getStrVal());
+			Assert.AreEqual("str",test.getStrVal());
 		}
 		/*
 		 * Tests getting item of a CLR array
@@ -558,7 +566,7 @@ namespace LuaInterface.Tests
 			lua["netobj"]=arr;
 			lua.DoString("val=netobj[1]");
 			string val=lua.GetString("val");
-			Assertion.AssertEquals("str2",val);
+			Assert.AreEqual("str2",val);
 			//Console.WriteLine("new val(from array to Lua)="+val);
 		}
 		/*
@@ -570,7 +578,7 @@ namespace LuaInterface.Tests
 			string[] arr=new string[] { "str1", "str2", "str3" };
 			lua["netobj"]=arr;
 			lua.DoString("netobj[1]='test'");
-			Assertion.AssertEquals("test",arr[1]);
+			Assert.AreEqual("test",arr[1]);
 			//Console.WriteLine("new val(from Lua to array)="+arr[1]);
 		}
 		/*
@@ -579,12 +587,12 @@ namespace LuaInterface.Tests
 		[Test]
 		public void CreateArray() 
 		{
-			lua.DoString("load_assembly(\"TestLua\")");
-			lua.DoString("TestClass=import_type(\"LuaInterface.Tests.TestClass\")");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type(\"LuaInterface.Tests.TestClass\")");
 			lua.DoString("arr=TestClass[3]");
 			lua.DoString("for i=0,2 do arr[i]=TestClass(i+1) end");
 			TestClass[] arr=(TestClass[])lua["arr"];
-			Assertion.AssertEquals(arr[1].testval,2);
+			Assert.AreEqual(arr[1].testval,2);
 		}
 		/*
 		 * Tests passing a Lua function to a delegate
@@ -593,14 +601,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaDelegateValueTypes() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("function func(x,y) return x+y; end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callDelegate1(func)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("delegate returned: "+a);
 		}
 		/*
@@ -610,14 +618,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaDelegateValueTypesOutParam() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("function func(x) return x,x*2; end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callDelegate2(func)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(6,a);
+			Assert.AreEqual(6,a);
 			//Console.WriteLine("delegate returned: "+a);
 		}
 		/*
@@ -627,14 +635,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaDelegateValueTypesByRefParam() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("function func(x,y) return x+y; end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callDelegate3(func)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("delegate returned: "+a);
 		}
 		/*
@@ -644,14 +652,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaDelegateValueTypesReturnReferenceType() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("function func(x,y) return TestClass(x+y); end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callDelegate4(func)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("delegate returned: "+a);
 		}
 		/*
@@ -661,14 +669,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaDelegateReferenceTypes() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("function func(x,y) return x.testval+y.testval; end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callDelegate5(func)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("delegate returned: "+a);
 		}
 		/*
@@ -678,14 +686,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaDelegateReferenceTypesOutParam() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("function func(x) return x,TestClass(x*2); end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callDelegate6(func)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(6,a);
+			Assert.AreEqual(6,a);
 			//Console.WriteLine("delegate returned: "+a);
 		}
 		/*
@@ -695,13 +703,13 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaDelegateReferenceTypesByRefParam() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("function func(x,y) return TestClass(x+y.testval); end");
 			lua.DoString("a=test:callDelegate7(func)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("delegate returned: "+a);
 		}
 		/*
@@ -711,15 +719,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceValueTypes() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:test1(x,y) return x+y; end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callInterface1(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -730,15 +738,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceValueTypesOutParam() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:test2(x) return x,x*2; end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callInterface2(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(6,a);
+			Assert.AreEqual(6,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -749,15 +757,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceValueTypesByRefParam() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:test3(x,y) return x+y; end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callInterface3(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -768,15 +776,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceValueTypesReturnReferenceType() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:test4(x,y) return TestClass(x+y); end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callInterface4(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -786,15 +794,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceReferenceTypes() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:test5(x,y) return x.testval+y.testval; end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callInterface5(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -805,15 +813,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceReferenceTypesOutParam() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:test6(x) return x,TestClass(x*2); end");
 			lua.DoString("test=TestClass()");
 			lua.DoString("a=test:callInterface6(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(6,a);
+			Assert.AreEqual(6,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -824,14 +832,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceReferenceTypesByRefParam() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:test7(x,y) return TestClass(x+y.testval); end");
 			lua.DoString("a=test:callInterface7(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(5,a);
+			Assert.AreEqual(5,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -841,15 +849,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceValueProperty() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:get_intProp() return itest.int_prop; end");
 			lua.DoString("function itest:set_intProp(val) itest.int_prop=val; end");
 			lua.DoString("a=test:callInterface8(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(3,a);
+			Assert.AreEqual(3,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -859,15 +867,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void LuaInterfaceReferenceProperty() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
 			lua.DoString("itest={}");
 			lua.DoString("function itest:get_refProp() return TestClass(itest.int_prop); end");
 			lua.DoString("function itest:set_refProp(val) itest.int_prop=val.testval; end");
 			lua.DoString("a=test:callInterface9(itest)");
 			int a=(int)lua.GetNumber("a");
-			Assertion.AssertEquals(3,a);
+			Assert.AreEqual(3,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 
@@ -876,18 +884,19 @@ namespace LuaInterface.Tests
 		 * Tests making an object from a Lua table and calling the base
 		 * class version of one of the methods the table overrides.
 		 */
+		[Ignore]
 		[Test]
 		public void LuaTableBaseMethod() 
 		{
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test={}");
 			lua.DoString("function test:overridableMethod(x,y) return 2*self.base:overridableMethod(x,y); end");
-			lua.DoString("make_object(test,'LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.make_object(test,'LuaInterface.Tests.TestClass')");
 			lua.DoString("a=TestClass:callOverridable(test,2,3)");
 			int a=(int)lua.GetNumber("a");
 			lua.DoString("free_object(test)");
-			Assertion.AssertEquals(10,a);
+			Assert.AreEqual(10,a);
 			//Console.WriteLine("interface returned: "+a);
 		}
 		/*
@@ -897,14 +906,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void GetMethodBySignatureFromObj() 
 		{
-			lua.DoString("load_assembly('mscorlib')");
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('mscorlib')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
-			lua.DoString("setMethod=get_method_bysig(test,'setVal','System.String')");
+			lua.DoString("setMethod=luanet.get_method_bysig(test,'setVal','System.String')");
 			lua.DoString("setMethod('test')");
 			TestClass test=(TestClass)lua["test"];
-			Assertion.AssertEquals("test",test.getStrVal());
+			Assert.AreEqual("test",test.getStrVal());
 			//Console.WriteLine("interface returned: "+test.getStrVal());
 		}
 		/*
@@ -914,14 +923,14 @@ namespace LuaInterface.Tests
 		[Test]
 		public void GetMethodBySignatureFromType() 
 		{
-			lua.DoString("load_assembly('mscorlib')");
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("luanet.load_assembly('mscorlib')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
 			lua.DoString("test=TestClass()");
-			lua.DoString("setMethod=get_method_bysig(TestClass,'setVal','System.String')");
+			lua.DoString("setMethod=luanet.get_method_bysig(TestClass,'setVal','System.String')");
 			lua.DoString("setMethod(test,'test')");
 			TestClass test=(TestClass)lua["test"];
-			Assertion.AssertEquals("test",test.getStrVal());
+			Assert.AreEqual("test",test.getStrVal());
 			//Console.WriteLine("interface returned: "+test.getStrVal());
 		}
 		/*
@@ -930,13 +939,13 @@ namespace LuaInterface.Tests
 		[Test]
 		public void GetStaticMethodBySignature() 
 		{
-			lua.DoString("load_assembly('mscorlib')");
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
-			lua.DoString("make_method=get_method_bysig(TestClass,'makeFromString','System.String')");
+			lua.DoString("luanet.load_assembly('mscorlib')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("make_method=luanet.get_method_bysig(TestClass,'makeFromString','System.String')");
 			lua.DoString("test=make_method('test')");
 			TestClass test=(TestClass)lua["test"];
-			Assertion.AssertEquals("test",test.getStrVal());
+			Assert.AreEqual("test",test.getStrVal());
 			//Console.WriteLine("interface returned: "+test.getStrVal());
 		}
 		/*
@@ -945,17 +954,15 @@ namespace LuaInterface.Tests
 		[Test]
 		public void GetConstructorBySignature() 
 		{
-			lua.DoString("load_assembly('mscorlib')");
-			lua.DoString("load_assembly('TestLua')");
-			lua.DoString("TestClass=import_type('LuaInterface.Tests.TestClass')");
-			lua.DoString("test_cons=get_constructor_bysig(TestClass,'System.String')");
+			lua.DoString("luanet.load_assembly('mscorlib')");
+			lua.DoString("luanet.load_assembly('TestLua')");
+			lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+			lua.DoString("test_cons=luanet.get_constructor_bysig(TestClass,'System.String')");
 			lua.DoString("test=test_cons('test')");
 			TestClass test=(TestClass)lua["test"];
-			Assertion.AssertEquals("test",test.getStrVal());
+			Assert.AreEqual("test",test.getStrVal());
 			//Console.WriteLine("interface returned: "+test.getStrVal());
 		}
-#endif
-
         void TestOk(bool flag)
         {
             if (flag)
@@ -972,13 +979,13 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('mscorlib')");
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test=TestClass()");
-            _Lua.DoString("err,errMsg=pcall(test.exceptionMethod,test)");
-            bool err = (bool)_Lua["err"];
-            Exception errMsg = (Exception)_Lua["errMsg"];
+            lua.DoString("luanet.load_assembly('mscorlib')");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+            lua.DoString("test=TestClass()");
+            lua.DoString("err,errMsg=pcall(test.exceptionMethod,test)");
+            bool err = (bool)lua["err"];
+            Exception errMsg = (Exception)lua["errMsg"];
             TestOk(!err);
             TestOk(errMsg.InnerException != null);
             if (errMsg.InnerException != null)
@@ -997,14 +1004,14 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('mscorlib')");
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test=TestClass()");
+            lua.DoString("luanet.load_assembly('mscorlib')");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+            lua.DoString("test=TestClass()");
 
             try
             {
-                _Lua.DoString("test:exceptionMethod()");
+                lua.DoString("test:exceptionMethod()");
 
                 Console.WriteLine("Test failed!!! Should have thrown an exception all the way out of Lua");
             }
@@ -1024,16 +1031,16 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('mscorlib')");
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test=TestClass()");
+            lua.DoString("luanet.load_assembly('mscorlib')");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+            lua.DoString("test=TestClass()");
 
-            _Lua.DoString("val=test.NullableBool");
-            TestOk(((object)_Lua["val"]) == null);
-            _Lua.DoString("test.NullableBool = true");
-            _Lua.DoString("val=test.NullableBool");
-            TestOk(((bool)_Lua["val"]) == true);
+            lua.DoString("val=test.NullableBool");
+            TestOk(((object)lua["val"]) == null);
+            lua.DoString("test.NullableBool = true");
+            lua.DoString("val=test.NullableBool");
+            TestOk(((bool)lua["val"]) == true);
 
             Destroy();
         }
@@ -1046,15 +1053,15 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test=TestClass()");
-            _Lua.DoString("TestStruct=luanet.import_type('LuaInterface.Tests.TestStruct')");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+            lua.DoString("test=TestClass()");
+            lua.DoString("TestStruct=luanet.import_type('LuaInterface.Tests.TestStruct')");
 
-            _Lua.DoString("struct=TestStruct(2)");
-            _Lua.DoString("test.Struct = struct");
-            _Lua.DoString("val=test.Struct.val");
-            TestOk(((double)_Lua["val"]) == 2.0);
+            lua.DoString("struct=TestStruct(2)");
+            lua.DoString("test.Struct = struct");
+            lua.DoString("val=test.Struct.val");
+            TestOk(((double)lua["val"]) == 2.0);
 
             Destroy();
         }
@@ -1063,14 +1070,14 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('mscorlib')");
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test=TestClass()");
-            _Lua.DoString("test:MethodOverload()");
-            _Lua.DoString("test:MethodOverload(test)");
-            _Lua.DoString("test:MethodOverload(1,1,1)");
-            _Lua.DoString("test:MethodOverload(2,2,i)\r\nprint(i)");
+            lua.DoString("luanet.load_assembly('mscorlib')");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+            lua.DoString("test=TestClass()");
+            lua.DoString("test:MethodOverload()");
+            lua.DoString("test:MethodOverload(test)");
+            lua.DoString("test:MethodOverload(1,1,1)");
+            lua.DoString("test:MethodOverload(2,2,i)\r\nprint(i)");
         }
 
         private void TestDispose()
@@ -1114,7 +1121,7 @@ namespace LuaInterface.Tests
             Init();
 
             DoWorkClass doWork = new DoWorkClass();
-            _Lua.RegisterFunction("dowork", doWork, typeof(DoWorkClass).GetMethod("DoWork"));
+            lua.RegisterFunction("dowork", doWork, typeof(DoWorkClass).GetMethod("DoWork"));
 
             bool failureDetected = false;
             int completed = 0;
@@ -1126,7 +1133,7 @@ namespace LuaInterface.Tests
                 {
                     try
                     {
-                        _Lua.DoString("dowork()");
+                        lua.DoString("dowork()");
                     }
                     catch
                     {
@@ -1147,13 +1154,13 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('mscorlib')");
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test=TestClass()");
+            lua.DoString("luanet.load_assembly('mscorlib')");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+            lua.DoString("test=TestClass()");
             try
             {
-                _Lua.DoString("test:_PrivateMethod()");
+                lua.DoString("test:_PrivateMethod()");
             }
             catch
             {
@@ -1170,18 +1177,18 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('mscorlib')");
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.RegisterFunction("p", null, typeof(System.Console).GetMethod("WriteLine", new Type[] { typeof(String) }));
+            lua.DoString("luanet.load_assembly('mscorlib')");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.RegisterFunction("p", null, typeof(System.Console).GetMethod("WriteLine", new Type[] { typeof(String) }));
 
             /// Lua command that works (prints to console)
-            _Lua.DoString("p('Foo')");
+            lua.DoString("p('Foo')");
 
             /// Yet this works...
-            _Lua.DoString("string.gsub('some string', '(%w+)', function(s) p(s) end)");
+            lua.DoString("string.gsub('some string', '(%w+)', function(s) p(s) end)");
 
             /// This fails if you don't fix Lua5.1 lstrlib.c/add_value to treat LUA_TUSERDATA the same as LUA_FUNCTION
-            _Lua.DoString("string.gsub('some string', '(%w+)', p)");
+            lua.DoString("string.gsub('some string', '(%w+)', p)");
 
             Destroy();
         }
@@ -1197,14 +1204,14 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test={}");
-            _Lua.DoString("function test:overridableMethod(x,y) return x*y; end");
-            _Lua.DoString("luanet.make_object(test,'LuaInterface.Tests.TestClass')");
-            _Lua.DoString("a=TestClass.callOverridable(test,2,3)");
-            int a = (int)_Lua.GetNumber("a");
-            _Lua.DoString("luanet.free_object(test)");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+            lua.DoString("test={}");
+            lua.DoString("function test:overridableMethod(x,y) return x*y; end");
+            lua.DoString("luanet.luanet.make_object(test,'LuaInterface.Tests.TestClass')");
+            lua.DoString("a=TestClass.callOverridable(test,2,3)");
+            int a = (int)lua.GetNumber("a");
+            lua.DoString("luanet.free_object(test)");
             TestOk(6 == a);
             //Console.WriteLine("interface returned: "+a);
         }
@@ -1218,15 +1225,15 @@ namespace LuaInterface.Tests
         {
             Init();
 
-            _Lua.DoString("luanet.load_assembly('TestLua')");
-            _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test={}");
-            _Lua.DoString("function test:overridableMethod(x,y) return x*y; end");
-            _Lua.DoString("luanet.make_object(test,'LuaInterface.Tests.TestClass')");
-            _Lua.DoString("test:setVal(3)");
-            _Lua.DoString("a=test.testval");
-            int a = (int)_Lua.GetNumber("a");
-            _Lua.DoString("luanet.free_object(test)");
+            lua.DoString("luanet.load_assembly('TestLua')");
+            lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+            lua.DoString("test={}");
+            lua.DoString("function test:overridableMethod(x,y) return x*y; end");
+            lua.DoString("luanet.luanet.make_object(test,'LuaInterface.Tests.TestClass')");
+            lua.DoString("test:setVal(3)");
+            lua.DoString("a=test.testval");
+            int a = (int)lua.GetNumber("a");
+            lua.DoString("luanet.free_object(test)");
             TestOk(3 == a);
             //Console.WriteLine("interface returned: "+a);
         }
@@ -1250,11 +1257,11 @@ namespace LuaInterface.Tests
 
             //Register a C# function
             MethodInfo testException = this.GetType().GetMethod("_TestException", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance, null, new Type[] { typeof(float), typeof(float) }, null);
-            _Lua.RegisterFunction("Multiply", this, testException);
+            lua.RegisterFunction("Multiply", this, testException);
 
             //create the lua event handler code for the entity
             //includes the bad code!
-            _Lua.DoString("function OnClick(sender, eventArgs)\r\n" +
+            lua.DoString("function OnClick(sender, eventArgs)\r\n" +
                           "--Multiply expects 2 floats, but instead receives 2 strings\r\n" +
                           "Multiply(asd, we)\r\n" +
                         "end");
@@ -1267,13 +1274,13 @@ namespace LuaInterface.Tests
             //            "end");
 
             //Create the event handler script
-            _Lua.DoString("function SubscribeEntity(e)\r\ne.Clicked:Add(OnClick)\r\nend");
+            lua.DoString("function SubscribeEntity(e)\r\ne.Clicked:Add(OnClick)\r\nend");
 
             //Create the entity object
             Entity entity = new Entity();
 
             //Register the entity object with the event handler inside lua
-            LuaFunction lf = _Lua.GetFunction("SubscribeEntity");
+            LuaFunction lf = lua.GetFunction("SubscribeEntity");
             lf.Call(new object[1] { entity });
 
             try
@@ -1296,7 +1303,7 @@ namespace LuaInterface.Tests
 
             try
             {
-                _Lua.DoString("thiswillthrowanerror", "MyChunk");
+                lua.DoString("thiswillthrowanerror", "MyChunk");
             }
             catch (Exception e)
             {
@@ -1316,18 +1323,18 @@ namespace LuaInterface.Tests
 
             //TestClassGeneric<string> genericClass = new TestClassGeneric<string>();
 
-            //_Lua.RegisterFunction("genericMethod", genericClass, typeof(TestClassGeneric<>).GetMethod("GenericMethod"));
-            //_Lua.RegisterFunction("regularMethod", genericClass, typeof(TestClassGeneric<>).GetMethod("RegularMethod"));
+            //lua.RegisterFunction("genericMethod", genericClass, typeof(TestClassGeneric<>).GetMethod("GenericMethod"));
+            //lua.RegisterFunction("regularMethod", genericClass, typeof(TestClassGeneric<>).GetMethod("RegularMethod"));
 
             //try
             //{
-            //    _Lua.DoString("genericMethod('thestring')");
+            //    lua.DoString("genericMethod('thestring')");
             //}
             //catch { }
 
             //try
             //{
-            //    _Lua.DoString("regularMethod()");
+            //    lua.DoString("regularMethod()");
             //}            
             //catch { }
 
@@ -1339,11 +1346,11 @@ namespace LuaInterface.Tests
             bool passed = true;
             TestClassWithGenericMethod classWithGenericMethod = new TestClassWithGenericMethod();
 
-            _Lua.RegisterFunction("genericMethod2", classWithGenericMethod, typeof(TestClassWithGenericMethod).GetMethod("GenericMethod"));
+            lua.RegisterFunction("genericMethod2", classWithGenericMethod, typeof(TestClassWithGenericMethod).GetMethod("GenericMethod"));
 
             try
             {
-                _Lua.DoString("genericMethod2(100)");
+                lua.DoString("genericMethod2(100)");
             }
             catch { }
 
@@ -1352,10 +1359,10 @@ namespace LuaInterface.Tests
 
             try
             {
-                _Lua.DoString("luanet.load_assembly('TestLua')");
-                _Lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
-                _Lua.DoString("test=TestClass(56)");
-                _Lua.DoString("genericMethod2(test)");
+                lua.DoString("luanet.load_assembly('TestLua')");
+                lua.DoString("TestClass=luanet.import_type('LuaInterface.Tests.TestClass')");
+                lua.DoString("test=TestClass(56)");
+                lua.DoString("genericMethod2(test)");
             }
             catch { }
 
@@ -1389,11 +1396,11 @@ namespace LuaInterface.Tests
 
             for (int i = 1; i < Count - 1; ++i)
             {
-                fc = _Lua.RegisterFunction("func" + i, t, typeof(MyClass).GetMethod("Func1"));
+                fc = lua.RegisterFunction("func" + i, t, typeof(MyClass).GetMethod("Func1"));
             }
-            fc = _Lua.RegisterFunction("func" + (Count - 1), t, typeof(MyClass).GetMethod("Func1"));
+            fc = lua.RegisterFunction("func" + (Count - 1), t, typeof(MyClass).GetMethod("Func1"));
 
-            _Lua.DoString("print(func1())");
+            lua.DoString("print(func1())");
         }
 
 

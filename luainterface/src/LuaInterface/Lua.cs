@@ -66,7 +66,11 @@ namespace LuaInterface
 			"luanet.load_assembly(\"mscorlib\")							\n";
 
 		/*readonly */ IntPtr luaState;
+		#if Release
 		ObjectTranslator translator;
+		#else
+		public ObjectTranslator translator;
+		#endif
 
         LuaCSFunction panicCallback, lockCallback, unlockCallback;
 
