@@ -659,8 +659,11 @@ namespace LuaInterface
 		
 		public LuaTable NewTable()
 		{
-		    	LuaDLL.lua_newtable(this.luaState);
-		       	return (LuaTable) this.translator.getObject(this.luaState, -1);
+        	int oldTop=LuaDLL.lua_gettop(luaState);
+			LuaDLL.lua_newtable(this.luaState);
+			object obj = this.translator.getObject(this.luaState, -1);
+			LuaDLL.lua_settop(luaState,oldTop);
+        	return (LuaTable) obj;
 		}
 
 		public ListDictionary GetTableDict(LuaTable table)
