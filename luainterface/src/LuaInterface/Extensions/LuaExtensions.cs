@@ -10,7 +10,7 @@ namespace LuaInterface.Extension
 	{
 		public static void RegisterMethods(this Lua lua, object that, Type inf)
 		{
-			foreach(MethodInfo info in inf.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.NonPublic))
+			foreach(MethodInfo info in inf.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Static))
 			{
 				LuaMethod[] attrs = (LuaMethod[])info.GetCustomAttributes(typeof(LuaMethod), false);
 				foreach(LuaMethod attr in attrs)
