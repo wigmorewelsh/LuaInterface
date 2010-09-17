@@ -843,8 +843,29 @@ namespace LuaInterface
                     break;
                 }
             }
-            if (currentLuaParam != nLuaParams + 1) // Number of parameters does not match
-                isMethod = false;
+            // HACK: If a CSFunction is used as the generator in a for loop
+            // Then the for loop calls the CSFunction with two null parameters
+            // I assume some Lua functions use these parameters to speed up the loop
+            // 
+            // As a side effect of this hack you can pass any number of null/nil parameters 
+            // to a CSFunction that normaly takes no parameters
+             if (currentLuaParam != nLuaParams + 1) // Number of parameters does not match
+            {
+            	isMethod = false;
+            	if(currentLuaParam == 1){
+	            	while(LuaDLL.lua_gettop(luaState) != 0){
+            			//FIXME: LuaDLL.lua_isnil doesn't seem to detect LuaTypes.LUA_TNIL as nil
+	            		if(LuaDLL.lua_isnil(luaState, LuaDLL.lua_gettop(luaState)) || LuaDLL.lua_type(luaState, 1) == LuaTypes.LUA_TNIL)
+		            	{
+		            		LuaDLL.lua_pop(luaState, 1);
+		            		isMethod = true;
+		            	}else{
+		            		isMethod = false;
+		            		break;
+		            	}
+	            	}
+            	}
+            }
             if (isMethod)
             {
                 methodCache.args = paramList.ToArray();
